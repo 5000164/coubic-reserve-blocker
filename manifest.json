@@ -1,8 +1,8 @@
 {
-  "name": "coubic_reserve_blocker",
+  "name": "coubic-reserve-blocker",
   "version": "0.1",
   "manifest_version": 2,
-  "description": "coubic_reserve_blocker",
+  "description": "coubic-reserve-blocker",
   "permissions": [
     "storage",
     "tabs",
@@ -17,6 +17,6 @@
     "persistent": false
   },
   "browser_action": {
-    "default_title": "coubic_reserve_blocker"
+    "default_title": "coubic-reserve-blocker"
   }
 }
