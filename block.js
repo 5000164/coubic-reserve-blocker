@@ -94,18 +94,28 @@ function looper() {
  * 登録処理
  */
 function register() {
+  // 処理の同期を取るためにすべて setTimeout でつなげている
+
+  // モーダルを開く
   $("[data-target=\"#offline-resv-modal\"]")[0].click();
   setTimeout(function () {
+    // 予約のブロックを選択
     $("[href=\"#availability-block\"]")[0].click();
     setTimeout(function () {
+      // ブロックする日をセット
       $("[name=\"blocked_hour[preferred_date]\"]").val(year + "/" + month + "/" + day);
       setTimeout(function () {
+        // ブロックを開始する時間をセット
         $("[name=\"blocked_hour[preferred_start_time]\"]").val(blockTimeFirst);
         setTimeout(function () {
+          // ブロックを終了する時間をセット
           $("[name=\"blocked_hour[preferred_end_time]\"]").val(blockTimeLast);
           setTimeout(function () {
+            // おそらく JavaScript 側でなにか処理を行っているので
+            // click ではなく trigger を使用している
             $("[name=\"commit\"]").trigger("click");
             setTimeout(function () {
+              // エラーが出た場合は画面が更新されないので自分で画面を更新する
               location.reload();
             }, 1000);
           }, 1000);
