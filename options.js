@@ -1,17 +1,16 @@
 "use strict";
 
 document.getElementById('save').onclick = function () {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     date_first: document.querySelector('[name="date_first"]').value,
     date_last: document.querySelector('[name="date_last"]').value,
     block_time_first: document.querySelector('[name="block_time_first"]').value,
     block_time_last: document.querySelector('[name="block_time_last"]').value
-  }, function () {
   });
 };
 
 window.onload = function () {
-  chrome.storage.sync.get([
+  chrome.storage.local.get([
     "date_first",
     "date_last",
     "block_time_first",

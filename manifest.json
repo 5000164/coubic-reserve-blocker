@@ -9,9 +9,19 @@
     "https://coubic.com/r/*/reservations/calendar"
   ],
   "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://coubic.com/r/*/reservations/calendar"
+      ],
+      "js": [
+        "jquery-2.1.4.min.js",
+        "register.js"
+      ]
+    }
+  ],
   "background": {
     "scripts": [
-      "jquery-2.1.4.min.js",
       "background.js"
     ],
     "persistent": false
