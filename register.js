@@ -1,66 +1,77 @@
 "use strict";
 
-// 保存されていた値を取得
-chrome.storage.local.get([
-  "exec_flag",
-  "exec_date",
-  "date_first",
-  "date_last",
-  "block_time_first",
-  "block_time_last"
-], function (data) {
-  // 実行フラグが立っている場合のみ処理を行う
-  if (data.exec_flag) {
-    // 日時が設定されていない場合は処理しない
-    if (
-      typeof data.date_first === "undefined"
-      ||
-      typeof data.date_last === "undefined"
-      ||
-      typeof data.block_time_first === "undefined"
-      ||
-      typeof data.block_time_last === "undefined"
-    ) {
-      chrome.storage.local.remove(["exec_date"], function () {
-        chrome.storage.local.set({exec_flag: false}, function () {
-          location.reload();
-        });
-      });
-    }
-
-    exec(data);
-  }
-});
+exec();
 
 /**
  * 実行処理
- *
- * @param data
  */
-function exec(data) {
-  // 実行対象日を取得する
-  var execDate;
-  if (typeof data.exec_date === "undefined") {
-    execDate = new Date(data.date_first);
-  }
-  else {
-    execDate = new Date(data.exec_date);
-  }
+function exec() {
+// 現在のタブ ID を取得する
+  chrome.runtime.sendMessage({}, function (response) {
+    var currentTabId = response;
 
-  // 設定する最終日を取得する
-  var dateLast = new Date(data.date_last);
+    // 保存されている値を取得する
+    chrome.storage.local.get([
+      "exec_flag",
+      "exec_tab_id",
+      "exec_date",
+      "date_first",
+      "date_last",
+      "block_time_first",
+      "block_time_last"
+    ], function (data) {
+      // 実行フラグが立っている場合のみ処理を行う
+      if (!data.exec_flag) {
+        return;
+      }
 
-  // 対象日が最終日を超えた場合は処理を終了する
-  if (execDate.getTime() > dateLast.getTime()) {
-    chrome.storage.local.remove(["exec_date"], function () {
-      chrome.storage.local.set({exec_flag: false}, function () {
-        location.reload();
-      });
+      // 日時が設定されていない場合は処理しない
+      if (
+        typeof data.date_first === "undefined"
+        ||
+        typeof data.date_last === "undefined"
+        ||
+        typeof data.block_time_first === "undefined"
+        ||
+        typeof data.block_time_last === "undefined"
+      ) {
+        return;
+      }
+
+      // 現在のタブと実行対象のタブが一致している場合のみ実行する
+      if (data.exec_tab_id !== currentTabId) {
+        return;
+      }
+
+      // 実行対象日を取得する
+      var execDate;
+      if (typeof data.exec_date === "undefined") {
+        execDate = new Date(data.date_first);
+      }
+      else {
+        execDate = new Date(data.exec_date);
+      }
+
+      // 設定する最終日を取得する
+      var dateLast = new Date(data.date_last);
+
+      // 対象日が最終日を超えた場合は処理を終了する
+      if (execDate.getTime() > dateLast.getTime()) {
+        var end_data = {
+          exec_flag: false,
+          exec_tab_id: undefined,
+          exec_date: undefined
+        };
+        chrome.storage.local.set(end_data, function () {
+          location.reload();
+        });
+        return;
+      }
+
+      // 登録処理を行う
+      register(execDate, data.block_time_first, data.block_time_last);
     });
-  }
-
-  // 登録処理を行う
-  register(execDate, data.block_time_first, data.block_time_last);
+  });
 }
 
 /**
