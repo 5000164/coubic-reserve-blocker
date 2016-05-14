@@ -89,7 +89,9 @@ function register(execDate, block_time_first, block_time_last) {
 
       // 予約が重複したなどで登録に失敗した場合は画面が更新されないので
       // 自分で画面を更新する
-      location.reload();
+      setTimeout(function () {
+        location.reload();
+      }, 1000);
     });
   }, 1000);
 }
